@@ -40,10 +40,17 @@ var PlaygroundDomain string
 
 var SegmentId string
 
+var HostName string
+
 // TODO move this to a sync map so it can be updated on demand when the configuration for a playground changes
 var Providers = map[string]map[string]*oauth2.Config{}
 
 func ParseFlags() {
+	
+	// Get current hostname from OS, else default to "localhost"
+	HostName, error := os.HostName()
+	if error != nil{HostName = "localhost"}
+	
 	flag.StringVar(&LetsEncryptCertsDir, "letsencrypt-certs-dir", "/certs", "Path where let's encrypt certs will be stored")
 	flag.BoolVar(&UseLetsEncrypt, "letsencrypt-enable", false, "Enabled let's encrypt tls certificates")
 	flag.BoolVar(&ForceTLS, "tls", false, "Use TLS to connect to docker daemons")
@@ -61,7 +68,7 @@ func ParseFlags() {
 	flag.StringVar(&CookieHashKey, "cookie-hash-key", "", "Hash key to use to validate cookies")
 	flag.StringVar(&CookieBlockKey, "cookie-block-key", "", "Block key to use to encrypt cookies")
 
-	flag.StringVar(&PlaygroundDomain, "playground-domain", "localhost", "Domain to use for the playground")
+	flag.StringVar(&PlaygroundDomain, "playground-domain", HostName, "Domain to use for the playground")
 	flag.StringVar(&AdminToken, "admin-token", "", "Token to validate admin user for admin endpoints")
 
 	flag.StringVar(&SegmentId, "segment-id", "", "Segment id to post metrics")
